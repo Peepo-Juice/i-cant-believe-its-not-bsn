@@ -36,7 +36,7 @@ use bevy_ecs::{
 ///         })
 ///         .id()
 /// });
-/// let entity_ref = world.get_entity(entity_with_component).unwrap();
+/// let entity_ref = world.get_entity(entity_with_component.unwrap()).unwrap();
 /// assert!(entity_ref.contains::<A>());
 /// assert!(!entity_ref.contains::<Maybe<A>>());
 ///
@@ -47,7 +47,7 @@ use bevy_ecs::{
 ///         })
 ///         .id()
 /// });
-/// let entity_ref = world.get_entity(entity_without_component).unwrap();
+/// let entity_ref = world.get_entity(entity_without_component.unwrap()).unwrap();
 /// assert!(!entity_ref.contains::<A>());
 /// assert!(!entity_ref.contains::<Maybe<A>>());
 /// ```
