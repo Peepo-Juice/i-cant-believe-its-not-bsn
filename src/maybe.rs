@@ -90,7 +90,7 @@ impl<B: Bundle> Default for Maybe<B> {
 /// Generates a [`MaybeCommand`].
 fn maybe_hook<B: Bundle>(mut world: DeferredWorld<'_>, entity: Entity, _component_id: ComponentId) {
     // Component hooks can't perform structural changes, so we need to rely on commands.
-    world.commands().add(MaybeCommand {
+    world.commands().queue(MaybeCommand {
         entity,
         _phantom: PhantomData::<B>,
     });
@@ -103,7 +103,7 @@ struct MaybeCommand<B> {
 
 impl<B: Bundle> Command for MaybeCommand<B> {
     fn apply(self, world: &mut World) {
-        let Some(mut entity_mut) = world.get_entity_mut(self.entity) else {
+        let Ok(mut entity_mut) = world.get_entity_mut(self.entity) else {
             #[cfg(debug_assertions)]
             panic!("Entity with Maybe component not found");
 
@@ -183,7 +183,7 @@ mod tests {
                 .id()
         });
 
-        let entity_ref = world.get_entity(entity_with_component).unwrap();
+        let entity_ref = world.get_entity(entity_with_component.unwrap()).unwrap();
         assert!(entity_ref.contains::<A>());
         assert!(!entity_ref.contains::<Maybe<A>>());
 
@@ -195,7 +195,7 @@ mod tests {
                 .id()
         });
 
-        let entity_ref = world.get_entity(entity_without_component).unwrap();
+        let entity_ref = world.get_entity(entity_without_component.unwrap()).unwrap();
         assert!(!entity_ref.contains::<A>());
         assert!(!entity_ref.contains::<Maybe<A>>());
     }
